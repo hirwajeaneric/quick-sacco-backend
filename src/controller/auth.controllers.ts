@@ -65,7 +65,13 @@ export const signIn = asyncWrapper(async (req: Request, res: Response, next: Nex
 });
 
 export const getUserProfile = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-    // Check existing email
+    const authToken = req.get('Authorization');
+    console.log(authToken);
+    
+    if (!authToken?.split(' ')[1]) {
+        return res.status(401).json({ message: "Access denied!" });
+    }
+    
     const isValid = await isTokenValid(req);
     if (!isValid) {
         return res.status(401).json({ message: "Access denied!" });

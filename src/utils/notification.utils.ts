@@ -11,7 +11,7 @@ export const sendEmail = (recipient: string, subject: string, body: string) => {
     });
 
     const mailOptions = {
-        from: `"Trash Mark" <${process.env.EMAIL_USER}>`,
+        from: `"Quick SACCO" <${process.env.EMAIL_USER}>`,
         to: recipient,
         subject: subject,
         text: body
