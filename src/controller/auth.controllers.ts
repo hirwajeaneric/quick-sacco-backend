@@ -114,7 +114,7 @@ export const regenerateOTP = asyncWrapper(async (req: Request, res: Response, ne
     await foundUser.save();
 
     // Send email
-    await sendEmail(foundUser.email, "Verify your account", `Hello ${foundUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verify-account?id=${foundUser._id}\n\nBest regards,\n\nQuickSacco`);
+    await sendEmail(foundUser.email, "Verify your account", `Hello ${foundUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verifyotp?id=${foundUser._id}\n\nBest regards,\n\nQuickSacco`);
     
     // Send response
     res.status(200).json({ message: "OTP resent!" });
@@ -122,6 +122,7 @@ export const regenerateOTP = asyncWrapper(async (req: Request, res: Response, ne
 
 
 export const verifyOTP = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
     const foundUser = await UserModel.findOne({ otp: req.body.otp });
     
     if (!foundUser) {
