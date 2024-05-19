@@ -10,17 +10,6 @@ export const addNew = asyncWrapper(async (req: Request, res: Response, next: Nex
         return res.status(400).json({ message: "Access denied" });
     };
 
-    req.body.seller = req.user?._id;
-
-    if (req.files) {
-        req.body.imageFiles = [];
-        const files = req.files as [Express.Multer.File]
-        const images = files.map((file: Express.Multer.File) => file.filename);
-        images.forEach((image) => {
-            req.body.imageFiles.push(image);
-        });
-    };
-
     const newApplication = await ApplicationModel.create(req.body);
 
     if (newApplication) {
@@ -52,21 +41,6 @@ export const update = asyncWrapper(async (req: Request, res: Response, next: Nex
         return res.status(400).json({ message: "Access denied" });
     }
 
-    const applicationToUpdate = await ApplicationModel.findById(id);
-
-    if (!applicationToUpdate) {
-        return res.status(404).json({ message: "Application not found" });
-    }
-
-    if (req.files) {
-        req.body.imageFiles = [];
-        const files = req.files as [Express.Multer.File]
-        const images = files.map((file: Express.Multer.File) => file.filename);
-        images.forEach((image) => {
-            req.body.imageFiles.push(image);
-        });
-    };
-
     // Save the updated application
     const updatedApplication = await ApplicationModel.findByIdAndUpdate(id, req.body, { new: true });
 
@@ -88,7 +62,7 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
     const userId = req.user?._id;
 
     // Find applications where seller matches the user ID
-    const userApplications = await ApplicationModel.find({ seller: userId });
+    const userApplications = await ApplicationModel.find({ teacherId: userId });
 
     res.status(200).json({ applications: userApplications });
 });
@@ -105,31 +79,6 @@ export const getApplicationById = asyncWrapper(async (req: Request, res: Respons
     } else {
         res.status(404).json({ message: "Application not found" });
     }
-});
-
-
-export const getAllAvailableApplications = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-    // Filter applications where `client` field is null
-    const applications = await ApplicationModel.find({});
-    const availableApplications = applications.filter((application: ApplicationDoc) => application.paid === false);
-
-    res.status(200).json({ applications: availableApplications });
-});
-
-export const getBoughtApplications = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-    // Validate token
-    const isTokenValid = await ValidateToken(req);
-    if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
-    }
-
-    // Get user ID from the request (e.g., from req.user)
-    const userId = req.user?._id;
-
-    // Find applications where `client` matches the user ID
-    const boughtApplications = await ApplicationModel.find({ client: userId });
-
-    res.status(200).json({ applications: boughtApplications });
 });
 
 export const deleteApplication = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
