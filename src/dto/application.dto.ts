@@ -1,4 +1,4 @@
-export interface ProductDoc extends Document {
+export interface ApplicationDoc extends Document {
     name: string;
     description: string;
     quantity: number;

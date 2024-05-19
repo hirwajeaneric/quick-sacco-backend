@@ -66,7 +66,6 @@ export const signIn = asyncWrapper(async (req: Request, res: Response, next: Nex
 
 export const getUserProfile = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const authToken = req.get('Authorization');
-    console.log(authToken);
     
     if (!authToken?.split(' ')[1]) {
         return res.status(401).json({ message: "Access denied!" });
@@ -95,7 +94,7 @@ export const getUserProfile = asyncWrapper(async (req: Request, res: Response, n
     res
         .cookie("access-token", token, { httpOnly: true, expires: new Date(Date.now() + 3600000) })
         .status(200)
-        .json({ user: rest, token });
+        .json(rest);
 });
 
 

@@ -1,7 +1,7 @@
 import { model, Document, Schema } from "mongoose";
-import { ProductDoc } from "../dto/product.dto";
+import { ApplicationDoc } from "../dto/application.dto";
 
-const ProductSchema = new Schema({
+const ApplicationSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     quantity: { type: Number, required: true },
@@ -42,7 +42,7 @@ const ProductSchema = new Schema({
         required: true,
         enum: {
             values: ['Home Appliance', 'Clothing', 'Shoes', 'Furniture', 'Electronics', 'Phone', 'Computer', 'Part of house', 'Cereals', 'Other food items'],
-            message: "Invalid product type"
+            message: "Invalid Application type"
         },
         default: 'Home Appliance'
     },
@@ -51,7 +51,7 @@ const ProductSchema = new Schema({
         required: true,
         enum: {
             values: ['Renewable', 'Non-renewable'],
-            message: "Invalid product category"
+            message: "Invalid Application category"
         },
         default: 'Renewable'
     }
@@ -65,4 +65,4 @@ const ProductSchema = new Schema({
     timestamps: true
 });
 
-export const Product = model<ProductDoc>("Product", ProductSchema);
+export const Application = model<ApplicationDoc>("Application", ApplicationSchema);
