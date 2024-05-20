@@ -159,7 +159,7 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
         expirationDate: new Date().getTime() + (60 * 1000 * 5),
     });
 
-    const link = `${process.env.CLIENT_URL}/reset-password?token=${token}&id=${foundUser._id}`
+    const link = `${process.env.CLIENT_URL}/resetpassword?token=${token}&id=${foundUser._id}`
     const emailBody = `Hello ${foundUser.lastName},\n\nClick on the link bellow to reset your password.\n\n${link}\n\nBest regards,\n\nQuickSacco`;
 
     await sendEmail(foundUser.email, "Reset your password", emailBody);
