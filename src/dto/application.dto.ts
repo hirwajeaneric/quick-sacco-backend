@@ -13,9 +13,9 @@ export interface ApplicationDoc extends Document {
     position: string;
     monthlySalary: number;
     amountRequested: number;
-    repaymentReriod: number;
+    repaymentPeriod: number;
     bankAccountNumber: string;
-    proofOffEmployment: string;
+    proofOfEmployment: string;
     copyOfNationalId: string;
     loanStatus: "Pending" | "Update required" | "Approved" | "Rejected";
 };

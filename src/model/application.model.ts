@@ -30,9 +30,9 @@ const ApplicationSchema = new Schema({
     position: { type: String, required: true },
     monthlySalary: { type: Number, required: true },
     amountRequested: { type: Number, required: true },
-    repaymentReriod: { type: Number, required: true },
+    repaymentPeriod: { type: Number, required: true },
     bankAccountNumber: { type: String, required: true },
-    proofOffEmployment: { type: String, required: true },
+    proofOfEmployment: { type: String, required: true },
     copyOfNationalId: { type: String, required: true },
     loanStatus: { 
         type: String, 
