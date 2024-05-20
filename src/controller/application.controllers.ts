@@ -9,8 +9,9 @@ export const addNew = asyncWrapper(async (req: Request, res: Response, next: Nex
     if (!isTokenValid) {
         return res.status(400).json({ message: "Access denied" });
     };
-
-    const newApplication = await ApplicationModel.create(req.body);
+    req.body.loanStatus = 'Pending';
+    
+    const newApplication = await ApplicationModel.create<ApplicationDoc>(req.body);
 
     if (newApplication) {
         res.status(201).json({ message: "Application added successfully", application: newApplication });

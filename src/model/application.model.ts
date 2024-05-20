@@ -40,7 +40,8 @@ const ApplicationSchema = new Schema({
         Enum: {
             values: ["Pending", "Update required", "Approved", "Rejected"],
             message: "{VALUE} is not a valid loan status"
-        }
+        },
+        default: "Pending"
     },
 },{
     toJSON: {
