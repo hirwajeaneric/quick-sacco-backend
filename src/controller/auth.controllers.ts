@@ -20,12 +20,26 @@ export const signUp = asyncWrapper(async (req: Request, res: Response, next: Nex
     req.body.salt = salt;
     req.body.otpExpiryTime = expiryDate;
 
+    
+    if (req.body.role === 'Manager') {
+        req.body.verified = true;
+    }
+    
     // Record account
     const recordedUser = await UserModel.create(req.body);
+    
+    var emailMessageBody = '';
+    if (recordedUser.role === 'Manager') {
+        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/manager/auth/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
+    } else if (recordedUser.role === 'Admin') {
+        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/admin/auth/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
+    } else {
+        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verify-account?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
+    }
 
     // Send email
     if (recordedUser) {
-        await sendEmail(req.body.email, "Verify your account", `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verify-account?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`);
+        await sendEmail(req.body.email, "Verify your account", emailMessageBody);
     }
     // Send response
     res.status(200).json({ message: "Account created!" });
