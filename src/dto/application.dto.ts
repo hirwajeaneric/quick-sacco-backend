@@ -12,6 +12,7 @@ export interface ApplicationDoc extends Document {
     workSchool: string;
     position: string;
     monthlySalary: number;
+    amountToPayPerMonth: number;
     amountRequested: number;
     repaymentPeriod: number;
     bankAccountNumber: string;
