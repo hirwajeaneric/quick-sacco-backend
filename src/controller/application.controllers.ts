@@ -19,20 +19,12 @@ export const addNew = asyncWrapper(async (req: Request, res: Response, next: Nex
 });
 
 
-
 export const list = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const applications = await ApplicationModel.find({});
     res.status(200).json({ applications });
 });
 
-/**
- * Updates a application by its ID.
- *
- * @param req - The Express.js request object.
- * @param res - The Express.js response object.
- * @param next - The Express.js next middleware function.
- * @returns - A JSON response with the updated application or an error message.
- */
+
 export const update = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.query; // Assuming application ID comes from the request URL
     // console.log(req.query);

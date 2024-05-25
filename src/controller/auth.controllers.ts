@@ -34,7 +34,7 @@ export const signUp = asyncWrapper(async (req: Request, res: Response, next: Nex
     } else if (recordedUser.role === 'Admin') {
         emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/admin/auth/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
     } else {
-        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verify-account?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
+        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
     }
 
     // Send email
