@@ -10,8 +10,8 @@ export default async (app: Application) => {
     app.use('/images', express.static(path.join(__dirname, '../images')));
     
     app.use(cors({
-        origin: [process.env.CLIENT_URL as string],
-        credentials: true,
+        origin: [process.env.CLIENT_URL as string, process.env.CLIENT_URL_1 as string],
+        credentials: true, 
         allowedHeaders: ['Content-Type', 'Authorization'],
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         preflightContinue: false,
