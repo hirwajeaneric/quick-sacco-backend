@@ -25,7 +25,7 @@ export default async (app: Application) => {
     });
 
     app.use('/api/v1/auth', userRouter);
-    app.use('/api/v1/product', productRouter);
+    app.use('/api/v1/application', productRouter);
 
     app.use(ErrorHandlerMiddleware);
 

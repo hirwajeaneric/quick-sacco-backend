@@ -4,7 +4,14 @@ import { Application as ApplicationModel } from "../model/application.model";
 import { ValidateToken } from "../utils/password.utils";
 import { ApplicationDoc } from "../dto/application.dto";
 
+export const test = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    next();
+});
+
 export const addNew = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
         return res.status(400).json({ message: "Access denied" });
