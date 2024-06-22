@@ -93,10 +93,16 @@ export const getManagerApplications = asyncWrapper(async (req: Request, res: Res
         return res.status(400).json({ message: "Access denied" });
     }
     // Get user ID from the request (e.g., from req.user)
-    const userId = req.user?._id;
-
+    const userId = req.query.managerId;
+    console.log(userId);
+    
+    
     // Find applications where seller matches the user ID
-    const userApplications = await ApplicationModel.find({ managerId: userId });
+    const userApplications = await ApplicationModel
+        .find({ managerId: userId })
+        .populate({ path: "managerId", select: "firstName lastName email" });
+
+    console.log(userApplications);
 
     res.status(200).json({ applications: userApplications });
 });

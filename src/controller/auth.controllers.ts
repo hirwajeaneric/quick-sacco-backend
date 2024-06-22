@@ -80,7 +80,7 @@ export const signIn = asyncWrapper(async (req: Request, res: Response, next: Nex
     res
         .cookie("access-token", token, { httpOnly: true, expires: new Date(Date.now() + 3600000) })
         .status(200)
-        .json({ message: "Sign in successful", token });
+        .json({ message: "Sign in successful", user: rest, token });
 });
 
 export const getUserProfile = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
