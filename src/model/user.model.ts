@@ -33,6 +33,15 @@ const UserSchema = new Schema({
         },
         default: 'Teacher'
     },
+    accountStatus: {
+        type: String,
+        required: true,
+        enum: {
+            values: ['Active', 'Inactive'],
+            message: "Value not allowed as account status"
+        },
+        default: 'Active'
+    }
 },{
     toJSON: {
         transform: (doc, ret) => {

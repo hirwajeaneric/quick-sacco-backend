@@ -1,9 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import asyncWrapper from "../middlewares/AsyncWrapper";
 import UserModel from "../model/user.model";
-import { GeneratePassword, GenerateSalt, GenerateToken, ValidatePassword, ValidateToken, isTokenValid } from "../utils/password.utils";
+import { GeneratePassword, GenerateSalt, GenerateToken, ValidatePassword, ValidateToken, generateStrongPassword, isTokenValid } from "../utils/password.utils";
 import { GenerateOTP, sendEmail } from "../utils/notification.utils";
 import { Token } from "../model/token.model";
+
+export const generateManagerPassword = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.role === 'Manager') {
+        req.body.password = generateStrongPassword();
+        req.body.verified = true;
+    }
+    next();
+});
 
 export const signUp = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     // Check existing email
@@ -11,6 +19,9 @@ export const signUp = asyncWrapper(async (req: Request, res: Response, next: Nex
     if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
     };
+
+    let userPassword = req.body.password;
+
     const salt = await GenerateSalt();
     req.body.password = await GeneratePassword(req.body.password, salt);
 
@@ -19,18 +30,13 @@ export const signUp = asyncWrapper(async (req: Request, res: Response, next: Nex
     req.body.otp = otp;
     req.body.salt = salt;
     req.body.otpExpiryTime = expiryDate;
-
-    
-    if (req.body.role === 'Manager') {
-        req.body.verified = true;
-    }
     
     // Record account
     const recordedUser = await UserModel.create(req.body);
     
     var emailMessageBody = '';
     if (recordedUser.role === 'Manager') {
-        emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/manager/auth/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
+        emailMessageBody = `Hello ${recordedUser.lastName},\n\nHere are your account credentials. \n\nEmail: ${recordedUser.email}\nPassword: ${userPassword}\n\nClick on the link bellow to login to your account: \n${process.env.CLIENT_URL}/manager/auth/signin.\n\nBest regards,\n\nQuick SACCO`;
     } else if (recordedUser.role === 'Admin') {
         emailMessageBody = `Hello ${recordedUser.lastName},\n\nYour OTP is ${otp}. \n\nClick on the link bellow to validate your account: \n${process.env.CLIENT_URL}/admin/auth/verifyotp?id=${recordedUser._id}.\n\nBest regards,\n\nQuick SACCO`;
     } else {
@@ -44,7 +50,6 @@ export const signUp = asyncWrapper(async (req: Request, res: Response, next: Nex
     // Send response
     res.status(200).json({ message: "Account created!" });
 });
-
 
 export const signIn = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     // Check existing email
@@ -111,6 +116,50 @@ export const getUserProfile = asyncWrapper(async (req: Request, res: Response, n
         .json(rest);
 });
 
+export const getManagers = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    const authToken = req.get('Authorization');
+    
+    if (!authToken?.split(' ')[1]) {
+        return res.status(401).json({ message: "Access denied!" });
+    }
+    
+    const isValid = await isTokenValid(req);
+    if (!isValid) {
+        return res.status(401).json({ message: "Access denied!" });
+    }
+
+    const managers = await UserModel.find({ role: 'Manager' });
+
+    if (!managers) {
+        return res.status(400).json({ message: "No managers found" });
+    }
+    
+    // Send response
+    res.status(200).json({ managers });
+});
+
+export const getTeachers = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    const authToken = req.get('Authorization');
+    
+    if (!authToken?.split(' ')[1]) {
+        return res.status(401).json({ message: "Access denied!" });
+    }
+    
+    const isValid = await isTokenValid(req);
+    if (!isValid) {
+        return res.status(401).json({ message: "Access denied!" });
+    }
+
+    const teachers = await UserModel.find({ role: 'Teacher' });
+
+    if (!teachers) {
+        return res.status(400).json({ message: "No teachers found" });
+    }
+    
+    // Send response
+    res.status(200).json({ teachers });
+});
+
 
 export const regenerateOTP = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const foundUser = await UserModel.findById(req.body.id);
@@ -172,8 +221,16 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
         user: foundUser._id,
         expirationDate: new Date().getTime() + (60 * 1000 * 5),
     });
+    
+    let link = '';
+    if (foundUser.role === "Teacher") {
+        link = `${process.env.CLIENT_URL}/resetpassword?token=${token}&id=${foundUser._id}`
+    } else if (foundUser.role === "Manager") {
+        link = `${process.env.CLIENT_URL}/manager/auth/resetpassword?token=${token}&id=${foundUser._id}`
+    } else {
+        link = `${process.env.CLIENT_URL}/admin/auth/resetpassword?token=${token}&id=${foundUser._id}`
+    }
 
-    const link = `${process.env.CLIENT_URL}/resetpassword?token=${token}&id=${foundUser._id}`
     const emailBody = `Hello ${foundUser.lastName},\n\nClick on the link bellow to reset your password.\n\n${link}\n\nBest regards,\n\nQuickSacco`;
 
     await sendEmail(foundUser.email, "Reset your password", emailBody);

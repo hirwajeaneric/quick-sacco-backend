@@ -16,7 +16,7 @@ declare global {
  * This function generates a salt to be used to generate passwords.
  * @returns salt string
  */
-export const GenerateSalt = async () => {
+export const GenerateSalt = async (): Promise<string> => {
     return await bcrypt.genSalt();
 }
 
@@ -26,7 +26,7 @@ export const GenerateSalt = async () => {
  * @param salt given salt number
  * @returns a password in form of a hashed password.
  */
-export const GeneratePassword = async (password: string, salt: string) => {
+export const GeneratePassword = async (password: string, salt: string): Promise<string> => {
     return await bcrypt.hash(password, salt);
 };
 
@@ -37,7 +37,7 @@ export const GeneratePassword = async (password: string, salt: string) => {
  * @param salt the salt that was used to generate the password
  * @returns true or false if the passwords match.
  */
-export const ValidatePassword = async (enteredPassword: string, savedPassword: string, salt: string) => {
+export const ValidatePassword = async (enteredPassword: string, savedPassword: string, salt: string): Promise<Boolean> => {
     return await GeneratePassword(enteredPassword, salt) === savedPassword;
 };
 
@@ -46,7 +46,7 @@ export const ValidatePassword = async (enteredPassword: string, savedPassword: s
  * @param payload an object that contains some information about the logged in user.
  * @returns signature string of text (a jwt token)
  */
-export const GenerateToken = async (payload: UserPayload) => {
+export const GenerateToken = async (payload: UserPayload): Promise<string> => {
     return jwt.sign(payload, SECRET_KEY as string, { expiresIn: "1d" }) // Other possible time of expiration formats are: 30m, 1h, 1d,...
 };
 
@@ -56,7 +56,7 @@ export const GenerateToken = async (payload: UserPayload) => {
  * @param req 
  * @returns true | false
  */
-export const ValidateToken = async (req: Request) => {
+export const ValidateToken = async (req: Request): Promise<Boolean> => {
     const signature = req.get('Authorization');
     if (signature) {
         const payload = jwt.verify(signature.split(' ')[1], SECRET_KEY as string) as UserPayload;
@@ -64,6 +64,7 @@ export const ValidateToken = async (req: Request) => {
 
         return true;
     }
+    return false;
 }
 
 interface DecodedPayload extends UserPayload{
@@ -74,7 +75,7 @@ interface DecodedPayload extends UserPayload{
     exp: number;
 }
 
-export const isTokenValid = async (req: Request) => {
+export const isTokenValid = async (req: Request): Promise<Boolean> => {
     const signature = req.get('Authorization');
     if (signature) {
         const payload = jwt.verify(signature.split(' ')[1], SECRET_KEY as string) as DecodedPayload;
@@ -87,9 +88,10 @@ export const isTokenValid = async (req: Request) => {
 
         return true;
     }
+    return false;
 }
 
-export const ValidateAdmin = async (req: Request) => {
+export const ValidateAdmin = async (req: Request): Promise<Boolean> => {
     const signature = req.get('Authorization');
     if (signature) {
         const payload = jwt.verify(signature.split(' ')[1], SECRET_KEY as string) as UserPayload;
@@ -97,4 +99,16 @@ export const ValidateAdmin = async (req: Request) => {
 
         return true;
     }
+    return false;
+}
+
+export const generateStrongPassword = ():string => {
+    const length = 15;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+    return password;
 }
