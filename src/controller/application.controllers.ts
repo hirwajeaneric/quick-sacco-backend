@@ -18,7 +18,7 @@ export const addNew = asyncWrapper(async (req: Request, res: Response, next: Nex
 
     req.body.loanStatus = 'Pending';
 
-    const newApplication = await ApplicationModel.create<ApplicationDoc>(req.body);
+    const newApplication = await ApplicationModel.create(req.body);
 
     if (newApplication) {
         // Automatically assign the new application to a manager
@@ -35,8 +35,10 @@ export const addNew = asyncWrapper(async (req: Request, res: Response, next: Nex
         const selectedManager = await UserModel.findById(sortedManagers[0].managerId);
         const selectedManagerId = selectedManager?._id;
 
+        console.log(selectedManagerId);
+
         // Assign the new application to the identified manager
-        await ApplicationModel.findByIdAndUpdate(newApplication._id, { managerId: selectedManagerId, managerName: `${selectedManager?.firstName} ${selectedManager?.lastName}` });
+        await ApplicationModel.findByIdAndUpdate(newApplication._id, { managerId: selectedManagerId });
 
         res.status(201).json({ message: "Application added successfully", application: newApplication });
     };
@@ -80,6 +82,21 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
 
     // Find applications where seller matches the user ID
     const userApplications = await ApplicationModel.find({ teacherId: userId });
+
+    res.status(200).json({ applications: userApplications });
+});
+
+export const getManagerApplications = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    // Validate token
+    const isTokenValid = await ValidateToken(req);
+    if (!isTokenValid) {
+        return res.status(400).json({ message: "Access denied" });
+    }
+    // Get user ID from the request (e.g., from req.user)
+    const userId = req.user?._id;
+
+    // Find applications where seller matches the user ID
+    const userApplications = await ApplicationModel.find({ managerId: userId });
 
     res.status(200).json({ applications: userApplications });
 });
