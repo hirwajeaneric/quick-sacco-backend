@@ -58,10 +58,11 @@ export const GenerateToken = async (payload: UserPayload): Promise<string> => {
  */
 export const ValidateToken = async (req: Request): Promise<Boolean> => {
     const signature = req.get('Authorization');
+    
     if (signature) {
         const payload = jwt.verify(signature.split(' ')[1], SECRET_KEY as string) as UserPayload;
         req.user = payload;
-
+        
         return true;
     }
     return false;

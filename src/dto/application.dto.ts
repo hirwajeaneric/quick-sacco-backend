@@ -20,3 +20,6 @@ export interface ApplicationDoc extends Document {
     copyOfNationalId: string;
     loanStatus: "Pending" | "Update required" | "Approved" | "Rejected";
 };
+export interface ExistingApplicationDoc extends ApplicationDoc {
+    _id: string | {};   
+};

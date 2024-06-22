@@ -242,12 +242,12 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
 export const resetPassword = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Invalid token" });
+        return res.status(400).json({ message: "Invalid or expired token" });
     };
 
     const foundUser = await UserModel.findById(req.user?._id);
     if (!foundUser) {
-        return res.status(400).json({ message: "Invalid token" });
+        return res.status(400).json({ message: "Invalid or expired token" });
     };
 
     foundUser.password = await GeneratePassword(req.body.password, foundUser.salt);

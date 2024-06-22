@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import asyncWrapper from "../middlewares/AsyncWrapper";
 import { Application as ApplicationModel } from "../model/application.model";
 import { ValidateToken } from "../utils/password.utils";
-import { ApplicationDoc } from "../dto/application.dto";
+import { ApplicationDoc, ExistingApplicationDoc } from "../dto/application.dto";
+import UserModel from '../model/user.model';
 
 export const test = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.body);
@@ -10,20 +11,37 @@ export const test = asyncWrapper(async (req: Request, res: Response, next: NextF
 });
 
 export const addNew = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
         return res.status(400).json({ message: "Access denied" });
     };
+
     req.body.loanStatus = 'Pending';
-    
+
     const newApplication = await ApplicationModel.create<ApplicationDoc>(req.body);
 
     if (newApplication) {
+        // Automatically assign the new application to a manager
+        const managers = await UserModel.find({ role: "Manager" });
+
+        // Calculate the number of applications assigned to each manager
+        const managerApplicationsCount = await Promise.all(managers.map(async (manager) => {
+            const count = await ApplicationModel.countDocuments({ managerId: manager._id });
+            return { managerId: manager._id, count: count };
+        }));
+
+        // Identify the manager with the fewest assigned applications
+        const sortedManagers = managerApplicationsCount.sort((a, b) => a.count - b.count);
+        const selectedManager = await UserModel.findById(sortedManagers[0].managerId);
+        const selectedManagerId = selectedManager?._id;
+
+        // Assign the new application to the identified manager
+        await ApplicationModel.findByIdAndUpdate(newApplication._id, { managerId: selectedManagerId, managerName: `${selectedManager?.firstName} ${selectedManager?.lastName}` });
+
         res.status(201).json({ message: "Application added successfully", application: newApplication });
     };
 });
+
 
 
 export const list = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +80,7 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
 
     // Find applications where seller matches the user ID
     const userApplications = await ApplicationModel.find({ teacherId: userId });
-    
+
     res.status(200).json({ applications: userApplications });
 });
 
@@ -72,7 +90,7 @@ export const getApplicationById = asyncWrapper(async (req: Request, res: Respons
 
     // Find the application by ID
     const application = await ApplicationModel.findById(id);
-    
+
     if (application) {
         res.status(200).json({ application });
     } else {
