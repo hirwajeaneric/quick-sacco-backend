@@ -72,7 +72,7 @@ export const getApplicationById = asyncWrapper(async (req: Request, res: Respons
 
     // Find the application by ID
     const application = await ApplicationModel.findById(id);
-
+    
     if (application) {
         res.status(200).json({ application });
     } else {
