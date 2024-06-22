@@ -57,13 +57,12 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
     if (!isTokenValid) {
         return res.status(400).json({ message: "Access denied" });
     }
-
     // Get user ID from the request (e.g., from req.user)
     const userId = req.user?._id;
 
     // Find applications where seller matches the user ID
     const userApplications = await ApplicationModel.find({ teacherId: userId });
-
+    
     res.status(200).json({ applications: userApplications });
 });
 
