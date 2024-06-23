@@ -10,6 +10,7 @@ interface UserDoc extends Document {
     salt: string;
     role: "Teacher" | "Manager" | "Admin";
     otp: number;
+    accountStatus: "Active" | "Inactive";
     otpExpiryTime: Date;
     _doc: UserDoc;
 };
