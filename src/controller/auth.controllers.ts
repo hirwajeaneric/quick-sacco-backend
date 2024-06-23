@@ -98,7 +98,7 @@ export const getUserProfile = asyncWrapper(async (req: Request, res: Response, n
     const existingUser = await UserModel.findOne({ email: req.user?.email });
 
     if (!existingUser) {
-        return res.status(400).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
     }
     
     const token = await GenerateToken({
@@ -131,7 +131,7 @@ export const getManagers = asyncWrapper(async (req: Request, res: Response, next
     const managers = await UserModel.find({ role: 'Manager' });
 
     if (!managers) {
-        return res.status(400).json({ message: "No managers found" });
+        return res.status(404).json({ message: "No managers found" });
     }
     
     // Send response
@@ -153,7 +153,7 @@ export const getTeachers = asyncWrapper(async (req: Request, res: Response, next
     const teachers = await UserModel.find({ role: 'Teacher' });
 
     if (!teachers) {
-        return res.status(400).json({ message: "No teachers found" });
+        return res.status(404).json({ message: "No teachers found" });
     }
     
     // Send response
@@ -164,7 +164,7 @@ export const getTeachers = asyncWrapper(async (req: Request, res: Response, next
 export const regenerateOTP = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const foundUser = await UserModel.findById(req.body.id);
     if (!foundUser) {
-        return res.status(400).json({ message: "Account with this email is not registered!" });
+        return res.status(404).json({ message: "Account with this email is not registered!" });
     };
 
     // Generate new OTP
@@ -207,7 +207,7 @@ export const verifyOTP = asyncWrapper(async (req: Request, res: Response, next: 
 export const forgotPassword = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const foundUser = await UserModel.findOne({ email: req.body.email });
     if (!foundUser) {
-        return res.status(400).json({ message: "Account with this email is not registered!" });
+        return res.status(401).json({ message: "Account with this email is not registered!" });
     };
 
     const token = await GenerateToken({
@@ -242,7 +242,7 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
 export const resetPassword = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Invalid or expired token" });
+        return res.status(401).json({ message: "Invalid or expired token" });
     };
 
     const foundUser = await UserModel.findById(req.user?._id);
@@ -262,7 +262,7 @@ export const resetPassword = asyncWrapper(async (req: Request, res: Response, ne
 export const updateAccount = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     };
 
     await UserModel.findByIdAndUpdate(req.user?._id, {
@@ -282,7 +282,7 @@ export const updateAccount = asyncWrapper(async (req: Request, res: Response, ne
     const updatedUser = await UserModel.findById(req.user?._id);
     
     if (!updatedUser) {
-        return res.status(400).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
     };
 
     res.status(200).json({ message: "Account info updated successfully!", user: updatedUser });
@@ -292,7 +292,7 @@ export const verifyToken = asyncWrapper(async(req: Request, res: Response, next:
     const validToken = await isTokenValid(req);
 
     if (!validToken) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     } 
     res.status(200).json({ message: "Token is valid" });
 });

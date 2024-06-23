@@ -14,7 +14,7 @@ export const test = asyncWrapper(async (req: Request, res: Response, next: NextF
 export const addNew = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     };
 
     req.body.loanStatus = 'Pending';
@@ -56,7 +56,7 @@ export const update = asyncWrapper(async (req: Request, res: Response, next: Nex
 
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     }
     
     const existingLoanDetails = await ApplicationModel.findById(id);
@@ -84,7 +84,7 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
     // Validate token
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     }
     // Get user ID from the request (e.g., from req.user)
     const userId = req.user?._id;
@@ -99,7 +99,7 @@ export const getManagerApplications = asyncWrapper(async (req: Request, res: Res
     // Validate token
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     }
     // Get user ID from the request (e.g., from req.user)
     const userId = req.query.managerId;
@@ -132,7 +132,7 @@ export const deleteApplication = asyncWrapper(async (req: Request, res: Response
     // Validate token (assuming authorization is required for deletion)
     const isTokenValid = await ValidateToken(req);
     if (!isTokenValid) {
-        return res.status(400).json({ message: "Access denied" });
+        return res.status(401).json({ message: "Access denied" });
     }
 
     const { id } = req.query;
