@@ -37,7 +37,9 @@ const ApplicationSchema = new Schema({
     repaymentPerMonth: { type: Number, required: true },
     bankAccountNumber: { type: String, required: true },
     proofOfEmployment: { type: String, required: true },
+    comment: { type: String },
     copyOfNationalId: { type: String, required: true },
+    managerComment: { type: String },
     loanStatus: { 
         type: String, 
         required: true,

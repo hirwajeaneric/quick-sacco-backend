@@ -81,7 +81,8 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
     const userId = req.user?._id;
 
     // Find applications where seller matches the user ID
-    const userApplications = await ApplicationModel.find({ teacherId: userId });
+    const userApplications = await ApplicationModel.find({ teacherId: userId })
+        
 
     res.status(200).json({ applications: userApplications });
 });
@@ -110,7 +111,9 @@ export const getApplicationById = asyncWrapper(async (req: Request, res: Respons
     const { id } = req.query; // Assuming application ID comes from the request URL
 
     // Find the application by ID
-    const application = await ApplicationModel.findById(id);
+    const application = await ApplicationModel
+        .findById(id)
+        .populate({ path: "managerId", select: "firstName lastName email"  });
 
     if (application) {
         res.status(200).json({ application });
