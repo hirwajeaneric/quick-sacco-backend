@@ -32,6 +32,8 @@ const ApplicationSchema = new Schema({
     monthlySalary: { type: Number, required: true },
     amountRequested: { type: Number, required: true },
     repaymentPeriod: { type: Number, required: true },
+    suggestedRepaymentPeriod: { type: Number, required: false },
+    suggestedRepaymentPerMonth: { type: Number, required: false },
     repaymentPerMonth: { type: Number, required: true },
     bankAccountNumber: { type: String, required: true },
     proofOfEmployment: { type: String, required: true },

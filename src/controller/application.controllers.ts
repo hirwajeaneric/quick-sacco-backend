@@ -102,8 +102,6 @@ export const getManagerApplications = asyncWrapper(async (req: Request, res: Res
         .find({ managerId: userId })
         .populate({ path: "managerId", select: "firstName lastName email" });
 
-    console.log(userApplications);
-
     res.status(200).json({ applications: userApplications });
 });
 
