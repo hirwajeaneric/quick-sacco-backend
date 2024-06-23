@@ -4,6 +4,7 @@ import { Application as ApplicationModel } from "../model/application.model";
 import { ValidateToken } from "../utils/password.utils";
 import { ApplicationDoc, ExistingApplicationDoc } from "../dto/application.dto";
 import UserModel from '../model/user.model';
+import { sendEmail } from "../utils/notification.utils";
 
 export const test = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.body);
@@ -60,14 +61,25 @@ export const update = asyncWrapper(async (req: Request, res: Response, next: Nex
     if (!isTokenValid) {
         return res.status(400).json({ message: "Access denied" });
     }
-
-    // Save the updated application
-    const updatedApplication = await ApplicationModel.findByIdAndUpdate(id, req.body, { new: true });
-
-    if (updatedApplication) {
-        res.status(200).json({ message: "Application updated successfully", application: updatedApplication });
-    } else {
-        res.status(500).json({ message: "Error updating application" });
+    
+    const existingLoanDetails = await ApplicationModel.findById(id);
+    
+    if (existingLoanDetails?.loanStatus !== req.body.loanStatus && req.body.loanStatus === 'Approved') {
+        const updatedLoan = await ApplicationModel.updateOne({ _id: id }, req.body);
+        if (updatedLoan) {
+            await sendEmail(req.body.email, "Loan Approved", `Your loan application has been approved`);
+            res.status(200).json({ message: "Application updated successfully", application: updatedLoan });
+        } else {
+            res.status(500).json({ message: "Error updating application" });    
+        }
+    } else if (existingLoanDetails?.loanStatus !== req.body.loanStatus && req.body.loanStatus === 'Rejected') {
+        const updatedLoan = await ApplicationModel.updateOne({ _id: id }, req.body);
+        if (updatedLoan) {
+            await sendEmail(req.body.email, "Loan Rejected", `Your loan application has been rejected`);
+            res.status(200).json({ message: "Application updated successfully", application: updatedLoan });
+        } else {
+            res.status(500).json({ message: "Error updating application" });    
+        }
     }
 });
 
@@ -100,7 +112,7 @@ export const getManagerApplications = asyncWrapper(async (req: Request, res: Res
     
     // Find applications where seller matches the user ID
     const userApplications = await ApplicationModel
-        .find({ managerId: userId })
+        .find({ managerId: { $eq: userId } })
         .populate({ path: "managerId", select: "firstName lastName email" });
 
     res.status(200).json({ applications: userApplications });

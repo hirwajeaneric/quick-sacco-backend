@@ -4,6 +4,7 @@ export interface ApplicationDoc extends Document {
     nationalId: string;
     email: string;
     teacherId: string;
+    managerId: string | string[] | undefined;
     phone: string;
     dateOfBirth: Date;
     gender: "Male" | "Female" | "Other";
@@ -11,10 +12,15 @@ export interface ApplicationDoc extends Document {
     numberOfDependencies: number;
     workSchool: string;
     position: string;
+    managerComment: string;
+    comment: string;
+    suggestedRepaymentPeriod: number;
+    suggestedRepaymentPerMonth: number;
     monthlySalary: number;
     amountToPayPerMonth: number;
     amountRequested: number;
     repaymentPeriod: number;
+    repaymentPerMonth: number;
     bankAccountNumber: string;
     proofOfEmployment: string;
     copyOfNationalId: string;
