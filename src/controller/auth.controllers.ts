@@ -138,7 +138,7 @@ export const getManagers = asyncWrapper(async (req: Request, res: Response, next
     res.status(200).json({ managers });
 });
 
-export const getTeachers = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+export const getApplicants = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
     const authToken = req.get('Authorization');
     
     if (!authToken?.split(' ')[1]) {
@@ -150,14 +150,14 @@ export const getTeachers = asyncWrapper(async (req: Request, res: Response, next
         return res.status(401).json({ message: "Access denied!" });
     }
 
-    const teachers = await UserModel.find({ role: 'Teacher' });
+    const applicants = await UserModel.find({ role: 'Applicant' });
 
-    if (!teachers) {
-        return res.status(404).json({ message: "No teachers found" });
+    if (!applicants) {
+        return res.status(404).json({ message: "No applicants found" });
     }
     
     // Send response
-    res.status(200).json({ teachers });
+    res.status(200).json({ applicants });
 });
 
 
@@ -223,7 +223,7 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
     });
     
     let link = '';
-    if (foundUser.role === "Teacher") {
+    if (foundUser.role === "Applicant") {
         link = `${process.env.CLIENT_URL}/resetpassword?token=${token}&id=${foundUser._id}`
     } else if (foundUser.role === "Manager") {
         link = `${process.env.CLIENT_URL}/manager/auth/resetpassword?token=${token}&id=${foundUser._id}`

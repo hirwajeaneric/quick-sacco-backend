@@ -90,7 +90,7 @@ export const getUserApplications = asyncWrapper(async (req: Request, res: Respon
     const userId = req.user?._id;
 
     // Find applications where seller matches the user ID
-    const userApplications = await ApplicationModel.find({ teacherId: userId })
+    const userApplications = await ApplicationModel.find({ applicantId: userId })
         
     res.status(200).json({ applications: userApplications });
 });

@@ -6,7 +6,7 @@ const ApplicationSchema = new Schema({
     lastName: { type: String, required: true },
     nationalId: { type: String, required: true },
     email: { type: String, required: true },
-    teacherId: { type: String, required: true },
+    applicantId: { type: String, required: true },
     managerId: { type: Schema.ObjectId, ref: "user", required: false },
     phone: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },

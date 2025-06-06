@@ -3,7 +3,7 @@ export interface ApplicationDoc extends Document {
     lastName: string;
     nationalId: string;
     email: string;
-    teacherId: string;
+    applicantId: string;
     managerId: string | string[] | undefined;
     phone: string;
     dateOfBirth: Date;

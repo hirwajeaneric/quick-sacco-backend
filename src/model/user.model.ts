@@ -8,7 +8,7 @@ interface UserDoc extends Document {
     password: string;
     verified: boolean;
     salt: string;
-    role: "Teacher" | "Manager" | "Admin";
+    role: "Applicant" | "Manager" | "Admin";
     otp: number;
     accountStatus: "Active" | "Inactive";
     otpExpiryTime: Date;
@@ -29,10 +29,10 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         enum: {
-            values: ['Teacher', 'Manager' ,'Admin'],
+            values: ['Applicant', 'Manager' ,'Admin'],
             message: "Value not allowed as role"
         },
-        default: 'Teacher'
+        default: 'Applicant'
     },
     accountStatus: {
         type: String,

@@ -1,0 +1,41 @@
+***************************  BACKEND  *************************
+
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# Database Configuration
+MONGODB_CONNECTION_STRING=mongodb://localhost:27017/quicksacco
+
+# JWT Configuration
+SECRET_KEY=83da5ba99b141740b77009e87b42dd34ecd58fed4bf2f4139f771458946f9e92ce62876509a652164c8c5179f1dbb6dacd8376c4ca89d683a5947d5d06504ca1
+
+# Email Configuration
+EMAIL_SERVICE=gmail
+EMAIL_USER=hirwajeric@gmail.com
+EMAIL_PASSWORD=gjif smvy mhxb jkem
+
+# Client URLs (CORS Configuration)
+CLIENT_URL=http://localhost:5173
+CLIENT_URL_1=http://localhost:3000
+
+# Cloudinary Configuration (if needed)
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+
+
+
+****************************  FRONTEND  ************************
+
+
+# API Configuration
+VITE_API_BASE_URL=http://localhost:3000
+
+# Environment
+VITE_ENVIRONMENT=development
+
+# Firebase Configuration (if using Firebase)
+VITE_FIREBASE_API_KEY=AIzaSyDDqn6Rco_ihtzHSzNK-5wPjzv7miP7mqk
