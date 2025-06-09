@@ -14,7 +14,8 @@ export const sendEmail = (recipient: string, subject: string, body: string) => {
         from: `"Quick SACCO" <${process.env.EMAIL_USER}>`,
         to: recipient,
         subject: subject,
-        text: body
+        // text: body,
+        html: body
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
