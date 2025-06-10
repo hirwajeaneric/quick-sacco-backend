@@ -69,7 +69,7 @@ export const signIn = asyncWrapper(async (req: Request, res: Response, next: Nex
     }
 
     const token = await GenerateToken({
-        _id: existingUser._id,
+        _id: existingUser._id.toString(),
         email: existingUser.email,
         verified: existingUser.verified
     });
@@ -102,7 +102,7 @@ export const getUserProfile = asyncWrapper(async (req: Request, res: Response, n
     }
     
     const token = await GenerateToken({
-        _id: existingUser._id,
+        _id: existingUser._id.toString(),
         email: existingUser.email,
         verified: existingUser.verified
     });
@@ -184,7 +184,6 @@ export const regenerateOTP = asyncWrapper(async (req: Request, res: Response, ne
 
 
 export const verifyOTP = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
     const foundUser = await UserModel.findOne({ otp: req.body.otp });
     
     if (!foundUser) {
@@ -211,7 +210,7 @@ export const forgotPassword = asyncWrapper(async (req: Request, res: Response, n
     };
 
     const token = await GenerateToken({
-        _id: foundUser._id,
+        _id: foundUser._id.toString(),
         email: foundUser.email,
         verified: foundUser.verified
     });
